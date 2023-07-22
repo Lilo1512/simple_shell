@@ -63,93 +63,83 @@ if (len) /* we have commands left in the chain buffer */
 k = a; /* init new iterator to current buf position */
 q = buf + a; /* get pointer for return */
 check_chain(info, buf, &k, a, len);
-		while (j < len) /* iterate to semicolon or end */
-		{
-			if (is_chain(info, buf, &j))
-				break;
-			j++;
-		}
-
-		i = j + 1; /* increment past nulled ';'' */
-		if (i >= len) /* reached end of buffer? */
-		{
-			i = len = 0; /* reset position and length */
-			info->cmd_buf_type = CMD_NORM;
-		}
-
-		*buf_p = p; /* pass back pointer to current command position */
-		return (_strlen(p)); /* return length of current command */
-	}
-
-	*buf_p = buf; /* else not a chain, pass back buffer from _getline() */
-	return (r); /* return length of buffer from _getline() */
+while (k < len) /* iterate to semicolon or end */
+{
+if (is_chain(info, buf, &k))
+break;
+k++;
+}
+a = k + 1; /* increment past nulled ';'' */
+if (a >= len) /* reached end of buffer? */
+{
+a = len = 0; /* reset position and length */
+info->cmd_buf_type = CMD_NORM;
+}
+*buf_q = q; /* pass back pointer to current command position */
+return (_strlen(q)); /* return length of current command */
+}
+*buf_q = buf; /* else not a chain, pass back buffer from _getline() */
+return (i); /* return length of buffer from _getline() */
 }
 
 /**
  * read_buf - reads a buffer
  * @info: parameter struct
  * @buf: buffer
- * @i: size
+ * @a: size
  *
- * Return: r
+ * Return: i
  */
-ssize_t read_buf(info_t *info, char *buf, size_t *i)
+ssize_t read_buf(info_t *info, char *buf, size_t *a)
 {
-	ssize_t r = 0;
-
-	if (*i)
-		return (0);
-	r = read(info->readfd, buf, READ_BUF_SIZE);
-	if (r >= 0)
-		*i = r;
-	return (r);
+ssize_t i = 0;
+if (*a)
+return (0);
+i = read(info->readfd, buf, READ_BUF_SIZE);
+if (i >= 0)
+*a = i;
+return (i);
 }
 
 /**
  * _getline - gets the next line of input from STDIN
  * @info: parameter struct
- * @ptr: address of pointer to buffer, preallocated or NULL
+ * @est: address of pointer to buffer, preallocated or NULL
  * @length: size of preallocated ptr buffer if not NULL
  *
- * Return: s
+ * Return: c
  */
-int _getline(info_t *info, char **ptr, size_t *length)
+int _getline(info_t *info, char **est, size_t *length)
 {
-	static char buf[READ_BUF_SIZE];
-	static size_t i, len;
-	size_t k;
-	ssize_t r = 0, s = 0;
-	char *p = NULL, *new_p = NULL, *c;
-
-	p = *ptr;
-	if (p && length)
-		s = *length;
-	if (i == len)
-		i = len = 0;
-
-	r = read_buf(info, buf, &len);
-	if (r == -1 || (r == 0 && len == 0))
-		return (-1);
-
-	c = _strchr(buf + i, '\n');
-	k = c ? 1 + (unsigned int)(c - buf) : len;
-	new_p = _realloc(p, s, s ? s + k : k + 1);
-	if (!new_p) /* MALLOC FAILURE! */
-		return (p ? free(p), -1 : -1);
-
-	if (s)
-		_strncat(new_p, buf + i, k - i);
-	else
-		_strncpy(new_p, buf + i, k - i + 1);
-
-	s += k - i;
-	i = k;
-	p = new_p;
-
-	if (length)
-		*length = s;
-	*ptr = p;
-	return (s);
+static char buf[READ_BUF_SIZE];
+static size_t a, len;
+size_t n;
+ssize_t i = 0, c = 0;
+char *q = NULL, *new_q = NULL, *e;
+q = *est;
+if (q && length)
+c = *length;
+if (a == len)
+a = len = 0;
+i = read_buf(info, buf, &len);
+if (i == -1 || (i == 0 && len == 0))
+return (-1);
+e = _strchr(buf + i, '\n');
+n = e ? 1 + (unsigned int)(e - buf) : len;
+new_q = _realloc(q, c, c ? c + n : n + 1);
+if (!new_q) /* MALLOC FAILURE! */
+return (q ? free(q), -1 : -1);
+if (c)
+_strncat(new_q, buf + a, n - a);
+else
+_strncpy(new_q, buf + a, n - a + 1);
+c += n - a;
+a = n;
+q = new_q;
+if (length)
+*length = c;
+*est = q;
+return (c);
 }
 
 /**
