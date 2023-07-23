@@ -122,7 +122,7 @@ int replace_vars(info_t *info)
 		}
 		if (!_strcmp(info->argv[a], "$$"))
 		{
-			replace_string(&(info->argv[i]),
+				replace_string(&(info->argv[a]),
 				_strdup(convert_number(getpid(), 10, 0)));
 			continue;
 		}
