@@ -3,16 +3,15 @@
 /**
  * is_cmd - determines if a file is an executable command
  * @info: the info struct
- * @paths: path to the file
+ * @path: path to the file
  *
  * Return: 1 if true, 0 otherwise
  */
-int is_cmd(info_t *info, char *paths)
+int is_cmd(info_t *info, char *path)
 {
 struct stat st;
-
 (void)info;
-if (!paths || stat(paths, &st))
+if (!path || stat(path, &st))
 return (0);
 if (st.st_mode & S_IFREG)
 {
@@ -51,7 +50,7 @@ return (buf);
 char *find_path(info_t *info, char *pathstr, char *cmd)
 {
 int a = 0, curr_pos = 0;
-char *paths;
+char *path;
 if (!pathstr)
 return (NULL);
 if ((_strlen(cmd) > 2) && starts_with(cmd, "./"))
@@ -63,15 +62,16 @@ while (1)
 {
 if (!pathstr[a] || pathstr[a] == ':')
 {
-paths = dup_chars(pathstr, curr_pos, a);
-if (!*paths)
-_strcat(paths, cmd);
+path = dup_chars(pathstr, curr_pos, a);
+if (!*path)
+_strcat(path, cmd);
 else
 {
-_strcat(paths, "/");
-_strcat(paths, cmd);
-if (is_cmd(info, paths))
-return (paths);
+_strcat(path, "/");
+_strcat(path, cmd);
+}
+if (is_cmd(info, path))
+return (path);
 if (!pathstr[a])
 break;
 curr_pos = a;
@@ -79,5 +79,4 @@ curr_pos = a;
 a++;
 }
 return (NULL);
-}
 }

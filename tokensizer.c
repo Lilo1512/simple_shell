@@ -77,7 +77,7 @@ n++;
 c[k] = malloc((n + 1) * sizeof(char));
 if (!c[k])
 {
-for (n = 0; n < n; n++)
+for (n = 0; n < k; n++)
 free(c[n]);
 free(c);
 return (NULL);
